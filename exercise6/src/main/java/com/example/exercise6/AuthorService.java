@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorService {
 static List <Author> authors = new ArrayList<Author>();
-	
+
 	static {
 		//int id, String name, String country, int dob, int qtyBooks, Boolean alive
 		Author author1 = new Author (1, "Paco", "Canada", 1980, 745891, true);
