@@ -1,18 +1,25 @@
 package com.example.exercise6;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Entity
 public class Author {
 	
+	@Id
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int id;
 	@NotBlank
 	@Size(min=2)
-	public String name;
-	public String country;
-	public int dob;
-	public int qtyBooks;
-	public Boolean alive;
+	private String name;
+	private String country;
+	private int dob;
+	private int qtyBooks;
+	private Boolean alive;
 	
 	public Author() {
 	}
@@ -20,6 +27,15 @@ public class Author {
 	public Author(int id, String name, String country, int dob, int qtyBooks, Boolean alive) {
 		super();
 		this.id = id;
+		this.name = name;
+		this.country = country;
+		this.dob = dob;
+		this.qtyBooks = qtyBooks;
+		this.alive = alive;
+	}
+	
+	public Author(String name, String country, int dob, int qtyBooks, Boolean alive) {
+		super();
 		this.name = name;
 		this.country = country;
 		this.dob = dob;

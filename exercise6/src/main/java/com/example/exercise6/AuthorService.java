@@ -1,61 +1,97 @@
 package com.example.exercise6;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-
 
 @Service
 public class AuthorService {
-static List <Author> authors = new ArrayList<Author>();
 
-	static {
-		//int id, String name, String country, int dob, int qtyBooks, Boolean alive
-		Author author1 = new Author (1, "Paco", "Canada", 1980, 745891, true);
-		Author author2 = new Author (2, "Alfred", "Portugal", 1800, 745891, false);
-		authors.add(author1);
-		authors.add(author2);
+	@Autowired
+	AuthorRepository authorRepository;
+
+	public Iterable<Author> queryAuthorsFromH2() {
+
+		return authorRepository.findAll();
+	}
+
+	public Author addAuthorToH2(Author author) {
+
+		authorRepository.save(author);
+
+		return author;
+	}
+
+	public Optional<Author> findAuthorById(int id) {
+
+		return authorRepository.findById(id);
 	}
 	
-	public List<Author> queryAuthors(){
-		
-		return authors;
-	}
+	public String update(int id, Author author) {
 
-	public void addAuthorToArray(Author author) {
-		authors.add(author);
-	}
+		String response = "";
+		Boolean changedValues = false;
+		Optional<Author> authorFound = authorRepository.findById(id);
 
-	public int findAuthorById(int id) {
-		
-		int indexAuthor = -1;
-		
-		for(Author authorTemporal : authors) {
-			
-			if (authorTemporal.getId() == id) {
-				
-				indexAuthor = authors.indexOf(authorTemporal);
+		if (authorFound.isPresent()) {
+
+			if (author.getName() != null) {
+				authorFound.get().setName(author.getName());
+				changedValues = true;
 			}
-		}
-		return indexAuthor;
+
+			if (author.getCountry() != null) {
+				authorFound.get().setCountry(author.getCountry());
+				changedValues = true;
+			}
+
+			if ((authorFound.get().getDob() != author.getDob()) && author.getDob() != 0) {
+				authorFound.get().setDob(author.getDob());
+				changedValues = true;
+			}
+
+			if ((authorFound.get().getQtyBooks() != author.getQtyBooks()) && (author.getQtyBooks() != 0)) {
+				authorFound.get().setQtyBooks(author.getQtyBooks());
+				changedValues = true;
+			}
+
+			if ((authorFound.get().getAlive() != author.getAlive()) && (author.getAlive() != null)) {
+				authorFound.get().setAlive(author.getAlive());
+				changedValues = true;
+			}
+
+			if (changedValues == true) {
+				authorRepository.save(authorFound.get());
+			} else
+				response += "There are no fields to update";
+
+		} else
+			response += "Author not found";
+
+		return response;
+
 	}
 
-	public void deleteAuthorFromArray(int id) {
-		
-		int index = findAuthorById(id);
-		authors.remove(index);
-		
+	public String findAndDeleteById(int id) {
+
+		String response = "";
+		Optional<Author> authorFound = authorRepository.findById(id);
+
+		if (authorFound.isPresent()) {
+
+			authorRepository.delete(authorFound.get());
+			response += "Author deleted";
+
+		} else
+			response += "Author not found";
+
+		return response;
 	}
 
-	public Author getAuthorByIndex(int indexAuthor) {
+	public void deleteAuthorFromH2(int id) {
 		
-		return authors.get(indexAuthor);
+		authorRepository.deleteById(id);
 	}
 
-	public void replaceAuthor(int indexAuthor, Author auhtorToUpdate) {
-		
-		authors.set(indexAuthor, auhtorToUpdate);
-	}
 }
